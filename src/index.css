@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Style for headings inside divs */
+div h1, div h2, div h3 {
+  margin: 0 0 10px; /* Space below headings */
+  color: black; /* Nice blue color */
+}
+
+/* Style for paragraphs inside divs */
+div p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5; /* Better readability */
+}
+

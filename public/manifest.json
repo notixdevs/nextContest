@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "nextContest",
+  "version": "1.0.0",
+  "description": "Track Upcoming Contests",
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": ["storage","alarms"],
+  "host_permissions": ["https://cp-extension-backend.onrender.com/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+}
