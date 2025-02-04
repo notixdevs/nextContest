@@ -3,16 +3,15 @@
 The **nextContest** Chrome Extension helps you stay on top of upcoming and ongoing contests from various platforms. With this extension, you can easily view important contest details such as the contest title, start time, duration, and time remaining until each contest starts, all in one place.
 
 
-![image](https://github.com/user-attachments/assets/15563203-930f-4f49-8b1b-d2af1c749572)
+![image](https://github.com/user-attachments/assets/07f0c89e-fb83-45e6-a7ea-1afb0a197454)
 
 
 ## Features
 
 - **Track Contests from Multiple Platforms**: Supports a range of major contest platforms.
-- **Contest Title and Platform**: See the title of each contest and the associated platform's icon.
-- **Start Time and Duration**: View the start time, duration and time remaining until start of upcoming contests.
+- **Contest Details at a Glance**: View the contest title, platform icon, start time, duration, and time remaining until it begins.
 - **Ongoing Contests**: Easily identify ongoing contests with a **Live** indicator at the bottom of the contest card.
-- **Automatic Updates**: Get real-time updates whenever a new contest is added or the status of an ongoing contest changes.
+- **Save Key Contests** – Pin important contests for quick access and stay focused on what matters most.
 - **Contest Redirection**: Click on the contest title to be redirected to the contest page for more details.
 
 ## Installation
@@ -54,7 +53,7 @@ nextContest currently supports the following platforms:
 ## Help Us Improve
 
 Found any bugs or have any suggestions to make nextContest better?
-Log them [here](https://github.com/notixdevs/nextContest/issues).
+Log them [here](https://forms.gle/iM17sUSwyJ17ayDr6).
 
 
 
