@@ -5,7 +5,7 @@ const Footer = () => {
                 <a href="https://forms.gle/iM17sUSwyJ17ayDr6" className="font-semibold hover:text-blue-500" target="_blank" rel="noopener noreferrer">
                     Report Issue
                 </a>
-                <a href="https://github.com/notixdevs/nextContest" className="font-semibold hover:text-blue-500" target="_blank" rel="noopener noreferrer">
+                <a href="https://chromewebstore.google.com/detail/nextcontest/iaegknohokdglkofffajgjogikgobban" className="font-semibold hover:text-blue-500" target="_blank" rel="noopener noreferrer">
                     Rate Us
                 </a>
                 <a href="https://notixdevs.netlify.app" className="font-semibold hover:text-blue-500" target="_blank" rel="noopener noreferrer">

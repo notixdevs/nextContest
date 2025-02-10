@@ -20,7 +20,7 @@ The **nextContest** Chrome Extension helps you stay on top of upcoming and ongoi
 ### Google Chrome
 
 1. Go to the [Chrome Web Store](https://chrome.google.com/webstore).
-2. Search for "nextContest" or follow this [link to the extension](#to_be_added).
+2. Search for "nextContest" or follow this [link to the extension](https://chromewebstore.google.com/detail/nextcontest/iaegknohokdglkofffajgjogikgobban).
 3. Click **Add to Chrome**.
 4. After the installation, the extension icon will appear in your Chrome toolbar.
 
@@ -61,7 +61,7 @@ Log them [here](https://forms.gle/iM17sUSwyJ17ayDr6).
 
 ## Rate Us
 
-If you find this extension helpful, please consider rating us! Your feedback helps us improve and provide better features.
+If you find this extension helpful, please consider rating us on webstore! Your feedback helps us improve and provide better features.
 
 [Rate us here!](https://chromewebstore.google.com/detail/nextcontest/iaegknohokdglkofffajgjogikgobban)
 
