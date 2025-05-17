@@ -54,27 +54,34 @@ const SelectedPlatformsPage = () => {
         const fetchLatestContests = async () => {
             try {
                 await fetchAndCacheContests(); // This fetches fresh data from your backend and saves it to chrome.storage
-    
                 chrome.storage.local.get(['contests'], (result) => {
                     if (chrome.runtime.lastError) {
                         setError("Failed to fetch contests from local storage.");
                         console.error(chrome.runtime.lastError);
                     } else if (result.contests && result.contests.length > 0) {
                         setContests(result.contests);
+                
+                        setPinnedContests((prevPinned) => {
+                            const updatedPinned = prevPinned
+                                .map((pinned) => {
+                                    const fresh = result.contests.find((c) => c.id === pinned.id);
+                                    return fresh ? fresh : pinned;
+                                })
+                                .filter(
+                                    (contest) => isContestLive(contest.start, contest.end) !== "ENDED"
+                                );
+                
+                            localStorage.setItem("pinnedContests", JSON.stringify(updatedPinned));
+                            return updatedPinned;
+                        });
+                
                     } else {
                         setError("No contests found.");
                     }
                     setLoading(false);
                 });
-    
-                // Clean up pinned contests
-                setPinnedContests((prevPinned) => {
-                    const updatedPinned = prevPinned.filter(
-                        (contest) => isContestLive(contest.start, contest.end) !== "ENDED"
-                    );
-                    localStorage.setItem("pinnedContests", JSON.stringify(updatedPinned));
-                    return updatedPinned;
-                });
+                
+                
     
             } catch (error) {
                 console.error("Error fetching contests:", error);
@@ -130,26 +137,25 @@ const SelectedPlatformsPage = () => {
         return "Upcoming";
     };
 
-    const filteredContests = useMemo(() => {
-        return contests.filter((contest) => {
+    const combinedContests = useMemo(() => {
+        const activeContests = contests.filter((contest) => {
             const isWebsiteMatch = displayWebsites.some(
                 (website) =>
                     contest.resource.toLowerCase() === website.toLowerCase()
             );
-            return (
-                isWebsiteMatch &&
-                isContestLive(contest.start, contest.end) !== "ENDED"
-            );
+            const isActive = isContestLive(contest.start, contest.end) !== "ENDED";
+            return isWebsiteMatch && isActive;
         });
-    }, [displayWebsites, contests]);
-
-    const combinedContests = [
-        ...pinnedContests,
-        ...filteredContests.filter(
-            (contest) =>
-                !pinnedContests.some((pinned) => pinned.id === contest.id)
-        ),
-    ];
+    
+        return [
+            ...pinnedContests,
+            ...activeContests.filter(
+                (contest) =>
+                    !pinnedContests.some((pinned) => pinned.id === contest.id)
+            ),
+        ];
+    }, [contests, displayWebsites, pinnedContests]);
+    
 
     const calculateDuration = (duration) => {
         const hours = Math.floor(duration / 3600);
