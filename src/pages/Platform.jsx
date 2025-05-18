@@ -11,7 +11,8 @@ const Platforms = () => {
 
     const [selectedPlatforms, setSelectedPlatforms] = useState(() => {
         const storedPlatforms = localStorage.getItem("selectedPlatforms");
-        return storedPlatforms ? JSON.parse(storedPlatforms) : [];
+        return storedPlatforms ? JSON.parse(storedPlatforms) : 
+            ["codeforces.com","codechef.com","leetcode.com","atcoder.jp","naukri.com/code360","geeksforgeeks.org"];
     });
 
     const handleToggleSwitch = (platform) => {

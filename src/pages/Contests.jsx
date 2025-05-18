@@ -8,7 +8,7 @@ import ContestCard from "../Components/ContestCard";
 import PlatformData from "../data/PlatformsData";
 import { fetchAndCacheContests } from "../background";
 
-const SelectedPlatformsPage = () => {
+const Contests = () => {
     const [platforms, setPlatforms] = useState([]);
     const [displayWebsites, setDisplayWebsites] = useState([]);
     const [pinnedContests, setPinnedContests] = useState([]);
@@ -264,4 +264,4 @@ const handlePinClick = (contest) => {
     );
 };
 
-export default SelectedPlatformsPage;
+export default Contests;

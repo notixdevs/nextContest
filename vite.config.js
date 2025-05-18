@@ -9,6 +9,7 @@ export default defineConfig({
       input: {
         popup: resolve(__dirname, 'index.html'),
         background: resolve(__dirname, 'src/background.js'),
+        reminder: resolve(__dirname,'reminder.html')
       },
       output: {
         entryFileNames: '[name].js',
