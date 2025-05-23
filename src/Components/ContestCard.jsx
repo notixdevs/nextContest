@@ -52,18 +52,20 @@ const ContestCard = ({
             </div>
 
             <div className="flex flex-col items-center justify-center h-full w-10 -translate-y-[5px] -translate-x-[2px]">
-                <span
-                    className={`cursor-pointer ${
-                        isPinned
-                            ? "text-yellow-500 scale-100"
-                            : "scale-90 text-gray-400"
-                    } text-3xl transition transform hover:scale-105`}
-                    onClick={() => onPinClick(contest)}
-                >
-                    ★
-                </span>
-                <ContestStatusBadge status={contestStatus} />
-            </div>
+    <span
+        title="Remind Before Contest"
+        className={`cursor-pointer ${
+            isPinned
+                ? "text-yellow-500 scale-100"
+                : "scale-90 text-gray-400"
+        } text-3xl transition transform hover:scale-105`}
+        onClick={() => onPinClick(contest)}
+    >
+        ★
+    </span>
+    <ContestStatusBadge status={contestStatus} />
+</div>
+
         </div>
     );
 };
