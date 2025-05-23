@@ -22,12 +22,15 @@ const Contests = () => {
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     useEffect(() => {
-        const storedPlatforms = localStorage.getItem("selectedPlatforms");
-        if (!storedPlatforms || JSON.parse(storedPlatforms).length === 0) {
-            navigate("/select-platforms");
-        } else {
-            setPlatforms(JSON.parse(storedPlatforms));
-        }
+        chrome.storage.local.get(["selectedPlatforms"], (result) => {
+            const storedPlatforms = result.selectedPlatforms;
+
+            if (!storedPlatforms || storedPlatforms.length === 0) {
+                navigate("/select-platforms");
+            } else {
+                setPlatforms(storedPlatforms);
+            }
+        });
 
         chrome.storage.local.get(["pinnedContests"], function (result) {
             if (result.pinnedContests) {

@@ -1,5 +1,8 @@
 import { isContestLive } from "./customHooks";
 
+let alarmListenerRegistered = false;
+let reminderWindows = {}; // contestId -> windowId
+
 chrome.runtime.onInstalled.addListener(async () => {
     await setupAlarm();
     await fetchAndCacheContests();
@@ -20,29 +23,10 @@ async function setupAlarm() {
 
 async function setupReminderAlarm() {
     await chrome.alarms.create("remindContest", {
-        periodInMinutes: 0.2, // Check every minute for better accuracy
+        periodInMinutes: 1,
     });
 }
 
-chrome.alarms.onAlarm.addListener(async (alarm) => {
-    if (alarm.name === "contestFetch") {
-        await fetchAndCacheContests();
-    }
-});
-
-// // Helper function to check if a contest starts in the next 5 minutes
-// const isContestStartingSoon = (startTime) => {
-//     const now = new Date();
-//     const contestStart = new Date(startTime);
-//     const timeDiff = contestStart.getTime() - now.getTime();
-//     const minutesDiff = timeDiff / (1000 * 60);
-//     console.log(minutesDiff);
-
-//     // Contest starts in the next 5 minutes (and hasn't started yet)
-//     return minutesDiff > 0 && minutesDiff <= 5;
-// };
-
-// Check pinned contests for upcoming ones starting in 5 minutes
 const pinnedContestCheck = async () => {
     try {
         const result = await new Promise((resolve) => {
@@ -51,110 +35,81 @@ const pinnedContestCheck = async () => {
 
         const pinnedContests = result.pinnedContests || [];
 
-        // console.log(pinnedContests);
-
         if (!Array.isArray(pinnedContests) || pinnedContests.length === 0) {
-            // console.log("No pinned contests found");
             return null;
         }
 
         const contestsStartingSoon = pinnedContests.filter((contest) => {
             return isContestLive(contest.start, contest.end, true) === "REMIND";
         });
-        
 
-        if (contestsStartingSoon.length === 0) return null;
-
-        return contestsStartingSoon[0];
+        return contestsStartingSoon[0] || null;
     } catch (error) {
         console.error("Error checking pinned contests:", error);
         return null;
     }
 };
 
-
-
-let reminderWindows = {}; // contestId -> windowId
-
-chrome.alarms.onAlarm.addListener(async (alarm) => {
-    if (alarm.name === "remindContest") {
-        console.log("Reminder alarm triggered");
-        const contest = await pinnedContestCheck();
-
-        if (!contest) {
-            // console.log("No contest starting soon");
-            return;
+// 🛡️ Prevent double listener registration
+if (!alarmListenerRegistered) {
+    chrome.alarms.onAlarm.addListener(async (alarm) => {
+        if (alarm.name === "contestFetch") {
+            await fetchAndCacheContests();
         }
 
-        const contestId = contest.id;
-        // console.log("Contest starting soon - ID:", contestId);
+        if (alarm.name === "remindContest") {
+            console.log("Reminder alarm triggered");
 
-        // Check if this contestId has already had a popup shown
-        const { shownPopups = [] } = await chrome.storage.local.get(
-            "shownPopups"
-        );
+            const contest = await pinnedContestCheck();
+            if (!contest) return;
 
-        if (shownPopups.includes(contestId)) {
-            // console.log("Popup already shown for contest ID:", contestId);
-            return;
-        }
+            const contestId = contest.id;
+            const { shownPopups = [] } = await chrome.storage.local.get("shownPopups");
 
-        // If a window for this contestId is already open, focus it
-        if (reminderWindows[contestId] !== undefined) {
+            // 🛑 Skip if already shown or being shown
+            if (shownPopups.includes(contestId)) return;
+
             try {
-                const windowInfo = await chrome.windows.get(
-                    reminderWindows[contestId]
-                );
-                if (windowInfo) {
-                    chrome.windows.update(reminderWindows[contestId], {
-                        focused: true,
-                    });
-                    return;
+                if (reminderWindows[contestId]) {
+                    const windowInfo = await chrome.windows.get(reminderWindows[contestId]);
+                    if (windowInfo) {
+                        chrome.windows.update(reminderWindows[contestId], { focused: true });
+                        return;
+                    }
                 }
-            } catch (error) {
-                // Window doesn't exist anymore
-                delete reminderWindows[contestId];
+            } catch {
+                delete reminderWindows[contestId]; // window not found
             }
+
+            // ✅ Create popup
+            chrome.windows.create(
+                {
+                    url: chrome.runtime.getURL(`reminder.html?contestId=${contestId}`),
+                    type: "popup",
+                    width: 500,
+                    height: 250,
+                },
+                async (window) => {
+                    if (window) {
+                        reminderWindows[contestId] = window.id;
+
+                        const updatedPopups = [...shownPopups, contestId];
+                        await chrome.storage.local.set({ shownPopups: updatedPopups });
+
+                        chrome.windows.onRemoved.addListener(function handleClose(windowId) {
+                            if (windowId === reminderWindows[contestId]) {
+                                delete reminderWindows[contestId];
+                                chrome.windows.onRemoved.removeListener(handleClose);
+                            }
+                        });
+                    }
+                }
+            );
         }
+    });
 
-        // Create new popup window with contestId as URL parameter
-        chrome.windows.create(
-            {
-                url: chrome.runtime.getURL(
-                    `reminder.html?contestId=${contestId}`
-                ),
-                type: "popup",
-                width: 500,
-                height: 250,
-            },
-            async (window) => {
-                if (window) {
-                    reminderWindows[contestId] = window.id;
-
-                    // Mark this contest as having shown a popup (permanent - won't show again)
-                    const updatedPopups = [...shownPopups, contestId];
-                    await chrome.storage.local.set({
-                        shownPopups: updatedPopups,
-                    });
-
-                    // console.log("Popup created for contest ID:", contestId);
-
-                    // Clean up the window ID when it's closed
-                    chrome.windows.onRemoved.addListener(function handleClose(
-                        windowId
-                    ) {
-                        if (windowId === reminderWindows[contestId]) {
-                            delete reminderWindows[contestId];
-                            chrome.windows.onRemoved.removeListener(
-                                handleClose
-                            );
-                        }
-                    });
-                }
-            }
-        );
-    }
-});
+    alarmListenerRegistered = true;
+}
 
 export async function fetchAndCacheContests(retryCount = 0) {
     try {
@@ -171,7 +126,6 @@ export async function fetchAndCacheContests(retryCount = 0) {
         }
 
         const contests = await response.json();
-
         const currentData = await chrome.storage.local.get(["contests"]);
 
         if (JSON.stringify(currentData.contests) !== JSON.stringify(contests)) {
@@ -185,9 +139,7 @@ export async function fetchAndCacheContests(retryCount = 0) {
 
         if (retryCount < 3) {
             const delay = Math.pow(2, retryCount) * 1000;
-            console.log(
-                `Retrying in ${delay}ms... (Attempt ${retryCount + 1}/3)`
-            );
+            console.log(`Retrying in ${delay}ms... (Attempt ${retryCount + 1}/3)`);
 
             return new Promise((resolve) => {
                 setTimeout(async () => {

@@ -6,14 +6,34 @@ import PlatformsList from "../Components/PlatformsList";
 import { AiOutlineMinusCircle, AiFillHome } from "react-icons/ai";
 import PlatformData from "../data/PlatformsData";
 
+const DEFAULT_PLATFORMS = [
+    "codeforces.com",
+    "codechef.com",
+    "leetcode.com",
+    "atcoder.jp",
+    "naukri.com/code360",
+    "geeksforgeeks.org",
+];
+
 const Platforms = () => {
     const navigate = useNavigate();
 
-    const [selectedPlatforms, setSelectedPlatforms] = useState(() => {
-        const storedPlatforms = localStorage.getItem("selectedPlatforms");
-        return storedPlatforms ? JSON.parse(storedPlatforms) : 
-            ["codeforces.com","codechef.com","leetcode.com","atcoder.jp","naukri.com/code360","geeksforgeeks.org"];
-    });
+    const [selectedPlatforms, setSelectedPlatforms] = useState([]);
+
+    useEffect(() => {
+        chrome.storage.local.get(["selectedPlatforms"], (result) => {
+            const stored = result.selectedPlatforms;
+
+            if (Array.isArray(stored) && stored.length > 0) {
+                setSelectedPlatforms(stored);
+            } else {
+                setSelectedPlatforms(DEFAULT_PLATFORMS);
+                chrome.storage.local.set({
+                    selectedPlatforms: DEFAULT_PLATFORMS,
+                });
+            }
+        });
+    }, []);
 
     const handleToggleSwitch = (platform) => {
         setSelectedPlatforms((prev) => {
@@ -25,10 +45,9 @@ const Platforms = () => {
     };
 
     useEffect(() => {
-        localStorage.setItem(
-            "selectedPlatforms",
-            JSON.stringify(selectedPlatforms)
-        );
+        chrome.storage.local.set({
+            selectedPlatforms: selectedPlatforms,
+        });
     }, [selectedPlatforms]);
 
     return (
