@@ -174,7 +174,7 @@ const ReminderPage = () => {
                 />
             </div>
             <a
-                href={contest.url}
+                href={contest.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 inline-block px-4 py-2 bg-gray-600 text-white font-semibold rounded hover:bg-gray-700 text-center w-full text-sm"
