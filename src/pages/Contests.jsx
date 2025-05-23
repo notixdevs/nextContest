@@ -7,11 +7,12 @@ import ContestCard from "../Components/ContestCard";
 
 import PlatformData from "../data/PlatformsData";
 import { fetchAndCacheContests } from "../background";
+import { calculateDuration, isContestLive } from "../customHooks";
 
 const Contests = () => {
+    const [pinnedContests, setPinnedContests] = useState([]);
     const [platforms, setPlatforms] = useState([]);
     const [displayWebsites, setDisplayWebsites] = useState([]);
-    const [pinnedContests, setPinnedContests] = useState([]);
     const [contests, setContests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -28,10 +29,11 @@ const Contests = () => {
             setPlatforms(JSON.parse(storedPlatforms));
         }
 
-        const storedPinnedContests = localStorage.getItem("pinnedContests");
-        if (storedPinnedContests) {
-            setPinnedContests(JSON.parse(storedPinnedContests));
-        }
+        chrome.storage.local.get(["pinnedContests"], function (result) {
+            if (result.pinnedContests) {
+                setPinnedContests(result.pinnedContests);
+            }
+        });
     }, [navigate]);
 
     useEffect(() => {
@@ -49,93 +51,62 @@ const Contests = () => {
         setDisplayWebsites(newDisplayWebsites);
     }, [platforms]);
 
-
     useEffect(() => {
         const fetchLatestContests = async () => {
             try {
                 await fetchAndCacheContests(); // This fetches fresh data from your backend and saves it to chrome.storage
-                chrome.storage.local.get(['contests'], (result) => {
+                chrome.storage.local.get(["contests"], (result) => {
                     if (chrome.runtime.lastError) {
-                        setError("Failed to fetch contests from local storage.");
+                        setError(
+                            "Failed to fetch contests from local storage."
+                        );
                         console.error(chrome.runtime.lastError);
                     } else if (result.contests && result.contests.length > 0) {
                         setContests(result.contests);
-                
+
                         setPinnedContests((prevPinned) => {
                             const updatedPinned = prevPinned
                                 .map((pinned) => {
-                                    const fresh = result.contests.find((c) => c.id === pinned.id);
+                                    const fresh = result.contests.find(
+                                        (c) => c.id === pinned.id
+                                    );
                                     return fresh ? fresh : pinned;
                                 })
                                 .filter(
-                                    (contest) => isContestLive(contest.start, contest.end) !== "ENDED"
+                                    (contest) =>
+                                        isContestLive(
+                                            contest.start,
+                                            contest.end
+                                        ) !== "ENDED"
                                 );
-                
-                            localStorage.setItem("pinnedContests", JSON.stringify(updatedPinned));
+
+                            chrome.storage.local.set({
+                                pinnedContests: updatedPinned,
+                            });
+
                             return updatedPinned;
                         });
-                
                     } else {
                         setError("No contests found.");
                     }
                     setLoading(false);
                 });
-                
-                
-    
             } catch (error) {
                 console.error("Error fetching contests:", error);
                 setError(error.message || "Unexpected error occurred.");
                 setLoading(false);
             }
         };
-    
+
         fetchLatestContests();
-    
+
         // Optional: refetch every X seconds (disable during dev if annoying)
         const intervalId = setInterval(() => {
             fetchLatestContests();
         }, 10000); // 10 seconds
-    
+
         return () => clearInterval(intervalId);
     }, []);
-    
-
-    const isContestLive = (start, end) => {
-        const now = new Date();
-
-        // Get local timezone offset in milliseconds
-        const localOffset = now.getTimezoneOffset() * 60 * 1000;
-        const offsetMs = -localOffset;
-
-        // Parse start and end times and add the timezone offset
-        const startDate = new Date(new Date(start).getTime() + offsetMs);
-        const endDate = new Date(new Date(end).getTime() + offsetMs);
-
-        if (now >= endDate) return "ENDED";
-
-        if (startDate <= now && now <= endDate) {
-            return "LIVE";
-        }
-
-        const diffInMilliseconds = startDate - now;
-        const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
-        
-        const diffInDays = Math.ceil(diffInMilliseconds / oneDayInMilliseconds);
-        const remainingMilliseconds = diffInMilliseconds % oneDayInMilliseconds;
-        const diffInHours = Math.ceil(remainingMilliseconds / (1000 * 60 * 60));
-        
-        const formattedDays = String(diffInDays).padStart(2, '0');
-        const formattedHours = String(diffInHours).padStart(2, '0');
-        if (diffInMilliseconds >= 0 && diffInMilliseconds < oneDayInMilliseconds) {
-            return `${formattedHours} hours`;
-        } else if (diffInDays >= 1 && diffInDays <= 8) {
-            return `${formattedDays} days`;
-        }
-        
-        
-        return "Upcoming";
-    };
 
     const combinedContests = useMemo(() => {
         const activeContests = contests.filter((contest) => {
@@ -143,10 +114,11 @@ const Contests = () => {
                 (website) =>
                     contest.resource.toLowerCase() === website.toLowerCase()
             );
-            const isActive = isContestLive(contest.start, contest.end) !== "ENDED";
+            const isActive =
+                isContestLive(contest.start, contest.end) !== "ENDED";
             return isWebsiteMatch && isActive;
         });
-    
+
         return [
             ...pinnedContests,
             ...activeContests.filter(
@@ -155,31 +127,21 @@ const Contests = () => {
             ),
         ];
     }, [contests, displayWebsites, pinnedContests]);
-    
 
-    const calculateDuration = (duration) => {
-        const hours = Math.floor(duration / 3600);
-        const minutes = Math.floor((duration % 3600) / 60);
-        return `${hours}h ${minutes}m`;
-    };
-
-const handlePinClick = (contest) => {
+    const handlePinClick = (contest) => {
         setPinnedContests((prevPinned) => {
             const newPinnedContests = prevPinned.some(
                 (pinned) => pinned.id === contest.id
             )
                 ? prevPinned.filter((pinned) => pinned.id !== contest.id)
                 : [...prevPinned, contest];
-    
+
             const sortedPinnedContests = newPinnedContests.sort((a, b) => {
-                return new Date(a.start) - new Date(b.start); 
+                return new Date(a.start) - new Date(b.start);
             });
 
-            localStorage.setItem(
-                "pinnedContests",
-                JSON.stringify(sortedPinnedContests)
-            );
-            
+            chrome.storage.local.set({ pinnedContests: sortedPinnedContests });
+
             return sortedPinnedContests;
         });
     };
@@ -210,7 +172,9 @@ const handlePinClick = (contest) => {
                         <div className="w-16 h-16 border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
                     </div>
                 ) : error ? (
-                    <div className="text-center text-[14px] text-red-500 p-4">{error}</div>
+                    <div className="text-center text-[14px] text-red-500 p-4">
+                        {error}
+                    </div>
                 ) : platforms.length > 0 ? (
                     <div className="mt-4">
                         {combinedContests.length > 0 ? (
