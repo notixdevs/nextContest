@@ -12,54 +12,52 @@ const ContestCard = ({
     userTimeZone,
 }) => {
     return (
-        <div className="bg-gray-200 border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className="grid grid-cols-[auto,1fr,auto] gap-4 items-center">
-                {/* Logo Column */}
-                <div className="flex justify-center items-center">
-                    <img
-                        className="w-12 h-12 rounded-lg object-cover border border-gray-200"
-                        src={logoSrc}
-                        alt="Platform Logo"
-                        title={
-                            contest.resource
-                                .split(".")[0]
-                                .charAt(0)
-                                .toUpperCase() +
-                            contest.resource.split(".")[0].slice(1)
-                        }
-                    />
-                </div>
+        <div className="bg-gray-200 border rounded-lg p-3 h-[81.6px] grid grid-cols-[auto,1fr,auto] gap-3 items-center hover:shadow-lg">
+            {/* Logo Column */}
+            <div className="flex justify-center items-center w-10">
+                <img
+                    className="transform -translate-y-2 w-10 h-10 rounded-full"
+                    src={logoSrc}
+                    alt="Platform Logo"
+                    title={
+                        contest.resource.split(".")[0].charAt(0).toUpperCase() +
+                        contest.resource.split(".")[0].slice(1)
+                    }
+                />
+            </div>
 
-                {/* Contest Details Column */}
-                <div className="flex flex-col justify-center min-w-0">
-                    <a
-                        href={contest.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium text-gray-800 hover:text-blue-500 text-sm"
+            <div className="flex flex-col justify-center max-w-[200px]">
+                <a
+                    href={contest.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-gray-800 hover:text-blue-500 text-sm"
+                >
+                    <span
+                        className="line-clamp-1 overflow-hidden text-ellipsis break-words"
+                        title={contest.event}
                     >
-                        <span
-                            className="block overflow-hidden text-ellipsis"
-                            title={contest.event}
-                        >
-                            {contest.event}
-                        </span>
-                    </a>
+                        {contest.event}
+                    </span>
+                </a>
 
-                    <TimeDisplay
-                        startTime={contest.start}
-                        userTimeZone={userTimeZone}
-                    />
-                    <p className="text-gray-700 text-sm mt-1">
-                        Duration: {duration}
-                    </p>
-                </div>
+                <TimeDisplay
+                    startTime={contest.start}
+                    userTimeZone={userTimeZone}
+                />
+                <p className="text-gray-600 text-[13px]">
+                    Duration: {duration}
+                </p>
+            </div>
 
-                {/* Status Column */}
-                <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="text-yellow-500 text-2xl">★</div>
-                    <ContestStatusBadge status={contestStatus} />
-                </div>
+            <div className="flex flex-col items-center justify-center h-full w-10 -translate-y-[5px] -translate-x-[2px]">
+                <span
+                    className={`cursor-pointer text-yellow-500 scale-100
+                     text-3xl transition transform hover:scale-105`}
+                >
+                    ★
+                </span>
+                <ContestStatusBadge status={contestStatus} />
             </div>
         </div>
     );
@@ -120,7 +118,7 @@ const ReminderPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 p-6">
+            <div className="min-h-screen bg-gray-100 p-6">
                 <div className="max-w-2xl mx-auto flex flex-col ">
                     <h2 className="text-xl font-bold align-items  text-gray-800 mb-4">
                         Contest Starts Soon!!
@@ -136,7 +134,7 @@ const ReminderPage = () => {
 
     if (!contest) {
         return (
-            <div className="min-h-screen bg-gray-50 p-6">
+            <div className="min-h-screen bg-gray-100 p-6">
                 <div className="max-w-2xl mx-auto">
                     <div className="text-center py-8">
                         <div className="text-gray-500 text-4xl mb-4">📌</div>
@@ -160,9 +158,9 @@ const ReminderPage = () => {
     const duration = calculateDuration(contest.duration);
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
+        <div className="min-h-screen bg-gray-100 p-4">
             <div className="max-w-2xl mx-auto flex flex-col ">
-                <h2 className="text-xl font-bold align-items  text-gray-800 mb-4">
+                <h2 className="text-xl font-bold align-items  text-gray-800 mb-2">
                     Contest Starts Soon!!
                 </h2>
 
@@ -175,6 +173,14 @@ const ReminderPage = () => {
                     userTimeZone={userTimeZone}
                 />
             </div>
+            <a
+                href={contest.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block px-4 py-2 bg-gray-600 text-white font-semibold rounded hover:bg-gray-700 text-center w-full text-sm"
+            >
+                Go to Contest
+            </a>
         </div>
     );
 };

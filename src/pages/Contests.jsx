@@ -55,60 +55,85 @@ const Contests = () => {
     }, [platforms]);
 
     useEffect(() => {
-        const fetchLatestContests = async () => {
+        const fetchAndCleanUpContests = async () => {
             try {
-                await fetchAndCacheContests(); // This fetches fresh data from your backend and saves it to chrome.storage
-                chrome.storage.local.get(["contests"], (result) => {
-                    if (chrome.runtime.lastError) {
-                        setError(
-                            "Failed to fetch contests from local storage."
-                        );
-                        console.error(chrome.runtime.lastError);
-                    } else if (result.contests && result.contests.length > 0) {
-                        setContests(result.contests);
-
-                        setPinnedContests((prevPinned) => {
-                            const updatedPinned = prevPinned
-                                .map((pinned) => {
-                                    const fresh = result.contests.find(
-                                        (c) => c.id === pinned.id
-                                    );
-                                    return fresh ? fresh : pinned;
-                                })
-                                .filter(
-                                    (contest) =>
-                                        isContestLive(
-                                            contest.start,
-                                            contest.end
-                                        ) !== "ENDED"
+                chrome.storage.local.get(
+                    ["contests", "lastFetched"],
+                    async (result) => {
+                        if (chrome.runtime.lastError) {
+                            setError(
+                                "Failed to fetch contests from local storage."
+                            );
+                            console.error(chrome.runtime.lastError);
+                            setLoading(false);
+                        } else if (
+                            result.contests &&
+                            result.contests.length > 0
+                        ) {
+                            // Use cached data
+                            setContests(result.contests);
+                            setLoading(false);
+                        } else {
+                            // Fetch new data and cache it
+                            try {
+                                await fetchAndCacheContests();
+                                chrome.storage.local.get(
+                                    ["contests"],
+                                    (newResult) => {
+                                        if (
+                                            newResult.contests &&
+                                            newResult.contests.length > 0
+                                        ) {
+                                            setContests(newResult.contests);
+                                            setLoading(false);
+                                        } else {
+                                            setError(
+                                                "Internal Error, Please Try Again Later."
+                                            );
+                                            setLoading(false);
+                                        }
+                                    }
                                 );
-
-                            chrome.storage.local.set({
-                                pinnedContests: updatedPinned,
-                            });
-
-                            return updatedPinned;
-                        });
-                    } else {
-                        setError("No contests found.");
+                            } catch (error) {
+                                setError(
+                                    error.message || "Failed to fetch contests."
+                                );
+                                setLoading(false);
+                            }
+                        }
                     }
-                    setLoading(false);
+                );
+
+                setPinnedContests((prevPinned) => {
+                    const updatedPinned = prevPinned.filter(
+                        (contest) =>
+                            isContestLive(contest.start, contest.end) !==
+                            "ENDED"
+                    );
+                    chrome.storage.local.set({
+                        pinnedContests: updatedPinned,
+                    });
+                    return updatedPinned;
                 });
             } catch (error) {
-                console.error("Error fetching contests:", error);
+                console.error(
+                    "Error fetching contests from local storage:",
+                    error
+                );
                 setError(error.message || "Unexpected error occurred.");
                 setLoading(false);
             }
         };
 
-        fetchLatestContests();
+        fetchAndCleanUpContests();
 
-        // Optional: refetch every X seconds (disable during dev if annoying)
         const intervalId = setInterval(() => {
-            fetchLatestContests();
-        }, 10000); // 10 seconds
+            fetchAndCleanUpContests();
+        }, 5000);
 
-        return () => clearInterval(intervalId);
+        return () => {
+            clearInterval(intervalId);
+        };
     }, []);
 
     const combinedContests = useMemo(() => {

@@ -6,15 +6,6 @@ import PlatformsList from "../Components/PlatformsList";
 import { AiOutlineMinusCircle, AiFillHome } from "react-icons/ai";
 import PlatformData from "../data/PlatformsData";
 
-const DEFAULT_PLATFORMS = [
-    "codeforces.com",
-    "codechef.com",
-    "leetcode.com",
-    "atcoder.jp",
-    "naukri.com/code360",
-    "geeksforgeeks.org",
-];
-
 const Platforms = () => {
     const navigate = useNavigate();
 
@@ -27,9 +18,9 @@ const Platforms = () => {
             if (Array.isArray(stored) && stored.length > 0) {
                 setSelectedPlatforms(stored);
             } else {
-                setSelectedPlatforms(DEFAULT_PLATFORMS);
+                setSelectedPlatforms([]);
                 chrome.storage.local.set({
-                    selectedPlatforms: DEFAULT_PLATFORMS,
+                    selectedPlatforms: [],
                 });
             }
         });
