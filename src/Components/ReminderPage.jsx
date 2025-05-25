@@ -53,7 +53,7 @@ const ContestCard = ({
             <div className="flex flex-col items-center justify-center h-full w-10 -translate-y-[5px] -translate-x-[2px]">
                 <span
                     className={`cursor-pointer text-yellow-500 scale-100
-                     text-3xl transition transform hover:scale-105`}
+                    text-3xl transition transform hover:scale-105`}
                 >
                     ★
                 </span>

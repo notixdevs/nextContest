@@ -13,7 +13,7 @@ const ContestCard = ({
     userTimeZone,
 }) => {
     return (
-        <div className="bg-gray-200 border rounded-lg p-3 h-[81.6px] grid grid-cols-[auto,1fr,auto] gap-3 items-center hover:shadow-lg">
+        <div className="bg-gray-200 border rounded-lg p-3 pt-2 h-[81.6px] grid grid-cols-[auto,1fr,auto] gap-3 items-center hover:shadow-lg">
             {/* Logo Column */}
             <div className="flex justify-center items-center w-10">
                 <img

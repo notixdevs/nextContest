@@ -62,16 +62,14 @@ const Contests = () => {
 
     useEffect(() => {
         const allowedWebsites = PlatformData.map((platform) => platform.url);
-
         const newDisplayWebsites =
             platforms.length > 0
                 ? allowedWebsites.filter((website) =>
-                      platforms.some((platform) =>
-                          website.toLowerCase().includes(platform.toLowerCase())
-                      )
-                  )
+                    platforms.some((platform) =>
+                        website.toLowerCase().includes(platform.toLowerCase())
+                    )
+                )
                 : allowedWebsites;
-
         setDisplayWebsites(newDisplayWebsites);
     }, [platforms]);
 
@@ -93,6 +91,13 @@ const Contests = () => {
                         setError("Internal Error, Please Try Again Later.");
                     }
                 }
+                setPinnedContests((prevPinned) => {
+                    const updatedPinned = prevPinned.filter(
+                        (contest) => isContestLive(contest.start, contest.end) !== "ENDED"
+                    );
+                    setLocalStorage({pinnedContests: updatedPinned});
+                    return updatedPinned;
+                });
             } catch (err) {
                 console.error("Error fetching contests:", err);
                 setError(err.message || "Unexpected error occurred.");
