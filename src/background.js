@@ -10,7 +10,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.runtime.onStartup.addListener(async () => {
-    console.log("Extension started (e.g. browser restart)");
+    // console.log("Extension started (e.g. browser restart)");
     await fetchAndCacheContests();
 });
 
@@ -58,7 +58,7 @@ if (!alarmListenerRegistered) {
         }
 
         if (alarm.name === "remindContest") {
-            console.log("Reminder alarm triggered");
+            // console.log("Reminder alarm triggered");
 
             const contest = await pinnedContestCheck();
             if (!contest) return;
