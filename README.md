@@ -1,4 +1,4 @@
-# nextContest
+# nextContest - Contest Tracker
 
 The **nextContest** Chrome Extension helps you stay on top of upcoming and ongoing contests from various platforms. With this extension, you can easily view important contest details such as the contest title, start time, duration, and time remaining until each contest starts, all in one place.
 
@@ -9,11 +9,13 @@ The **nextContest** Chrome Extension helps you stay on top of upcoming and ongoi
 
 ## Features
 
-- **Track Contests from Multiple Platforms**: Supports a range of major contest platforms.
-- **Contest Details at a Glance**: View the contest title, platform icon, start time, duration, and time remaining until it begins.
-- **Ongoing Contests**: Easily identify ongoing contests with a **Live** indicator at the bottom of the contest card.
-- **Save Key Contests** – Pin important contests for quick access and stay focused on what matters most.
+- **Track Contests from Multiple Platforms**: Supports a range of major contest platforms.  
+- **Contest Details at a Glance**: View the contest title, platform icon, start time, duration, and time remaining until it begins.  
+- **Ongoing Contests**: Easily identify ongoing contests with a **Live** indicator at the bottom of the contest card.  
+- **Pin and Get Reminders** – Click on a contest to pin it for quick access and automatically receive a reminder popup 5 minutes before it starts.  
 - **Contest Redirection**: Click on the contest title to be redirected to the contest page for more details.
+
+
 
 ## Installation
 
