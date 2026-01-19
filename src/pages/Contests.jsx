@@ -133,9 +133,11 @@ const Contests = () => {
             return isWebsiteMatch && isActive;
         });
 
+        const sortedActiveContests = activeContests.sort((a, b) => new Date(a.start) - new Date(b.start));
+
         return [
             ...pinnedContests,
-            ...activeContests.filter(
+            ...sortedActiveContests.filter(
                 (contest) =>
                     !pinnedContests.some((pinned) => pinned.id === contest.id)
             ),
