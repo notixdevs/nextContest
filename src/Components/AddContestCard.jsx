@@ -45,24 +45,24 @@ const AddContestCard = ({ onSave }) => {
                 />
 
                 {/* Row 2: Start Time */}
-                <div className="flex items-center gap-1 text-[13px] text-gray-600">
-                    <span className="font-normal">Start:</span>
+                <div className="flex items-center gap-1 text-[13px] text-gray-600 w-full">
+                    <span className="font-normal whitespace-nowrap">Start:</span>
                     <input
                         type="datetime-local"
-                        className="bg-white/50 hover:bg-white focus:bg-white border-b border-transparent focus:border-blue-500 text-gray-800 rounded-sm px-1 py-0 focus:outline-none h-[20px] text-[13px] w-full"
+                        className="bg-white/50 hover:bg-white focus:bg-white border-b border-transparent focus:border-blue-500 text-gray-800 rounded-sm px-1 py-0 focus:outline-none h-[20px] text-[13px] flex-1 min-w-0"
                         value={start}
                         onChange={(e) => setStart(e.target.value)}
                     />
                 </div>
 
                 {/* Row 3: Duration & Link */}
-                <div className="flex items-center gap-2 text-[13px] text-gray-600">
-                    <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2 text-[13px] text-gray-600 w-full">
+                    <div className="flex items-center gap-1 whitespace-nowrap">
                         <span className="font-normal">Duration:</span>
                         <input
-                            type="text"
+                            type="number"
                             placeholder="min"
-                            className="bg-white/50 hover:bg-white focus:bg-white border-b border-transparent focus:border-blue-500 text-gray-800 rounded-sm px-1 py-0 focus:outline-none w-[35px] h-[20px] text-center text-[13px]"
+                            className="bg-white/50 hover:bg-white focus:bg-white border-b border-transparent focus:border-blue-500 text-gray-800 rounded-sm px-1 py-0 focus:outline-none w-[45px] h-[20px] text-center text-[13px]"
                             value={duration}
                             onChange={(e) => setDuration(e.target.value)}
                         />
@@ -83,14 +83,14 @@ const AddContestCard = ({ onSave }) => {
                 <button
                     onClick={handleSave}
                     disabled={!isValid}
-                    className={`transition transform hover:scale-105 translate-y-[22px]  -translate-x-[5px] block leading-none text-2xl ${
+                    className={`transition transform hover:scale-105 translate-y-[22px]   block leading-none text-2xl ${
                         isValid 
                             ? "text-blue-500 hover:text-blue-600 cursor-pointer" 
                             : "text-gray-400 cursor-not-allowed scale-90"
                     }`}
                     title={isValid ? "Save" : "Name and Start Time required"}
                 >
-                    <FaCheck className="w-[22px] h-[22px] transform translate-y-[2px]" />
+                    <FaCheck className="w-[22px] h-[22px] transform translate-y-[2px] -translate-x-[10px] " />
                 </button>
             </div>
         </div>

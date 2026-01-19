@@ -32,7 +32,7 @@ export const isContestLive = (start, end,reminder=false) => {
     const formattedHours = String(diffInHours).padStart(2, "0");
     if (diffInMilliseconds >= 0 && diffInMilliseconds < oneDayInMilliseconds) {
         return `${formattedHours} hours`;
-    } else if (diffInDays >= 1 && diffInDays <= 8) {
+    } else if (diffInDays >= 1) {
         return `${formattedDays} days`;
     }
 
@@ -41,7 +41,7 @@ export const isContestLive = (start, end,reminder=false) => {
 
 
 export const calculateDuration = (duration) => {
-    if (!duration || duration <= 0) return "N/A";
+    if (!duration || duration <= 0) return "Not Added";
     const hours = Math.floor(duration / 3600);
     const minutes = Math.floor((duration % 3600) / 60);
     return `${hours}h ${minutes}m`;

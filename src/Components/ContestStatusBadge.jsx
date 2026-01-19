@@ -21,7 +21,7 @@ function ContestStatusBadge(props) {
                 >
                     &lt;&nbsp;
                 </span>
-                {status.substring(0, 2)}
+                {status.split(" ")[0]}
                 {isHours ? "H" : "D"}
             </div>
         );

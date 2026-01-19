@@ -72,7 +72,7 @@ const Platforms = () => {
                 <hr className="w-full border-t-2 border-gray-300 mt-2" />
             </div>
             <PlatformsList
-                platformsInfo={PlatformData}
+                platformsInfo={PlatformData.filter((p) => p.name !== "Manual")}
                 selectedPlatforms={selectedPlatforms}
                 onToggle={handleToggleSwitch}
             />
