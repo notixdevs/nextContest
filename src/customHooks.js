@@ -41,6 +41,7 @@ export const isContestLive = (start, end,reminder=false) => {
 
 
 export const calculateDuration = (duration) => {
+    if (!duration || duration <= 0) return "N/A";
     const hours = Math.floor(duration / 3600);
     const minutes = Math.floor((duration % 3600) / 60);
     return `${hours}h ${minutes}m`;

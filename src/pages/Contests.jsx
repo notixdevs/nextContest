@@ -153,8 +153,8 @@ const Contests = () => {
         const newContest = {
             id: `manual_${Date.now()}`,
             event: name,
-            start: startTime.toISOString(),
-            end: endTime.toISOString(),
+            start: startTime.toISOString().replace("Z", ""),
+            end: endTime.toISOString().replace("Z", ""),
             resource: "manual",
             href: link || "",
             duration: durationSec,

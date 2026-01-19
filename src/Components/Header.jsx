@@ -12,12 +12,14 @@ const Header = ({ onSettingsClick, onAddClick, isAdding }) => (
                         isAdding ? "rotate-45" : "rotate-0"
                     }`}
                     onClick={onAddClick}
+                    title={isAdding ? "Cancel" : "Add Contest"}
                 >
                     <span className="text-3xl font-bold -translate-y-[2px]  leading-none select-none">+</span>
                 </button>
                 <button
                     className="p-2 hover:bg-gray-100 rounded-full transition w-10 h-10 flex items-center justify-center"
                     onClick={onSettingsClick}
+                    title="Settings"
                 >
                     <IoSettingsSharp className="w-5 h-5" />
                 </button>
