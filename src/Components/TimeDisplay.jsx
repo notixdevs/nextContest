@@ -1,7 +1,8 @@
 const TimeDisplay = ({ startTime, userTimeZone = "Asia/Kolkata" }) => {
     const formatTime = (gmtTimeString) => {
         try {
-            const gmtDate = new Date(gmtTimeString + "Z");
+            const timeString = gmtTimeString.endsWith('Z') ? gmtTimeString : gmtTimeString + "Z";
+            const gmtDate = new Date(timeString);
 
             if (isNaN(gmtDate.getTime())) {
                 throw new Error("Invalid date");

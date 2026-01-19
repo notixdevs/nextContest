@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import ContestCard from "../Components/ContestCard";
+import AddContestCard from "../Components/AddContestCard";
 
 import PlatformData from "../data/PlatformsData";
 import { fetchAndCacheContests } from "../background";
@@ -14,6 +15,8 @@ const Contests = () => {
     const [platforms, setPlatforms] = useState([]);
     const [displayWebsites, setDisplayWebsites] = useState([]);
     const [contests, setContests] = useState([]);
+    const [manualContests, setManualContests] = useState([]);
+    const [isAdding, setIsAdding] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showLoader, setShowLoader] = useState(false);
@@ -38,10 +41,11 @@ const Contests = () => {
         });
 
     useEffect(() => {
-        getLocalStorage(["selectedPlatforms", "pinnedContests"])
+        getLocalStorage(["selectedPlatforms", "pinnedContests", "manualContests"])
             .then((result) => {
                 const storedPlatforms = result.selectedPlatforms;
                 const storedPinned = result.pinnedContests;
+                const storedManual = result.manualContests || [];
 
                 if (!storedPlatforms || storedPlatforms.length === 0) {
                     navigate("/select-platforms");
@@ -52,6 +56,8 @@ const Contests = () => {
                 if (storedPinned) {
                     setPinnedContests(storedPinned);
                 }
+                
+                setManualContests(storedManual);
             })
             .catch((err) => {
                 console.error("Failed to load local storage:", err);
@@ -116,11 +122,12 @@ const Contests = () => {
     }, []);
 
     const combinedContests = useMemo(() => {
-        const activeContests = contests.filter((contest) => {
+        const allContests = [...contests, ...manualContests];
+        const activeContests = allContests.filter((contest) => {
             const isWebsiteMatch = displayWebsites.some(
                 (website) =>
                     contest.resource.toLowerCase() === website.toLowerCase()
-            );
+            ) || contest.resource === "manual";
             const isActive =
                 isContestLive(contest.start, contest.end) !== "ENDED";
             return isWebsiteMatch && isActive;
@@ -133,7 +140,47 @@ const Contests = () => {
                     !pinnedContests.some((pinned) => pinned.id === contest.id)
             ),
         ];
-    }, [contests, displayWebsites, pinnedContests]);
+    }, [contests, manualContests, displayWebsites, pinnedContests]);
+
+    const handleAddContest = (data) => {
+        const { name, start, duration, link } = data;
+        const startTime = new Date(start);
+        // Duration in minutes, default to 0 if invalid
+        const durationMin = parseInt(duration) || 0;
+        const endTime = new Date(startTime.getTime() + durationMin * 60000);
+        const durationSec = durationMin * 60; // Duration in seconds for consistency
+
+        const newContest = {
+            id: `manual_${Date.now()}`,
+            event: name,
+            start: startTime.toISOString(),
+            end: endTime.toISOString(),
+            resource: "manual",
+            href: link || "",
+            duration: durationSec,
+        };
+
+        const updatedManual = [...manualContests, newContest];
+        setManualContests(updatedManual);
+        setLocalStorage({ manualContests: updatedManual });
+
+        // Auto-pin
+        handlePinClick(newContest);
+        setIsAdding(false);
+    };
+
+    const handleDeleteContest = (contestToDelete) => {
+        const updatedManual = manualContests.filter(c => c.id !== contestToDelete.id);
+        setManualContests(updatedManual);
+        setLocalStorage({ manualContests: updatedManual });
+        
+        // Remove from pinned if present
+        if (pinnedContests.some(p => p.id === contestToDelete.id)) {
+            const updatedPinned = pinnedContests.filter(p => p.id !== contestToDelete.id);
+            setPinnedContests(updatedPinned);
+            setLocalStorage({ pinnedContests: updatedPinned });
+        }
+    };
 
     const handlePinClick = (contest) => {
         setPinnedContests((prevPinned) => {
@@ -174,10 +221,15 @@ const Contests = () => {
 
     return (
         <div className="flex flex-col bg-gray-100 h-[600px] w-[400px] overflow-hidden rounded-lg">
-            <Header onSettingsClick={handleSettingsClick} />
+            <Header 
+                onSettingsClick={handleSettingsClick} 
+                onAddClick={() => setIsAdding(!isAdding)}
+                isAdding={isAdding}
+            />
 
             {/* Scrollable Contest List */}
             <div className="flex-1 overflow-auto p-4 pt-0">
+                {isAdding && <AddContestCard onSave={handleAddContest} />}
                 {showLoader ? (
                     <div className="flex justify-center items-center h-48">
                         <div className="w-16 h-16 border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
@@ -207,9 +259,11 @@ const Contests = () => {
                                         contest.duration
                                     );
 
+                                    const isManual = contest.resource === "manual";
+
                                     return (
                                         <ContestCard
-                                            key={index}
+                                            key={contest.id}
                                             contest={contest}
                                             logoSrc={logoSrc}
                                             isPinned={isPinned}
@@ -217,6 +271,8 @@ const Contests = () => {
                                             contestStatus={contestStatus}
                                             duration={duration}
                                             userTimeZone={userTimeZone}
+                                            isManual={isManual}
+                                            onDelete={handleDeleteContest}
                                         />
                                     );
                                 })}

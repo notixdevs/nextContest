@@ -4,6 +4,7 @@ import leetcode from "../assets/images/platformImages/leetcode.svg";
 import atcoder from "../assets/images/platformImages/atcoder.svg";
 import naukri from "../assets/images/platformImages/naukri.svg";
 import geeksforgeeks from "../assets/images/platformImages/geeksforgeeks.svg";
+import manual from "../assets/images/platformImages/manual.svg";
 
 const PlatformData = [
     { name: "Codeforces", url: "codeforces.com", image: codeforces },
@@ -12,6 +13,7 @@ const PlatformData = [
     { name: "AtCoder", url: "atcoder.jp", image: atcoder },
     { name: "Coding Ninjas", url: "naukri.com/code360", image: naukri },
     { name: "GeeksforGeeks", url: "geeksforgeeks.org", image: geeksforgeeks },
+    { name: "Manual", url: "manual", image: manual },
 ];
 
 export default PlatformData;
