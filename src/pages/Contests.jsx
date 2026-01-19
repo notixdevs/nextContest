@@ -47,6 +47,16 @@ const Contests = () => {
                 const storedPinned = result.pinnedContests;
                 const storedManual = result.manualContests || [];
 
+                // Filter out ended manual contests
+                const activeManualContests = storedManual.filter(contest => 
+                    isContestLive(contest.start, contest.end) !== "ENDED"
+                );
+
+                // Update storage if we filtered out any expired contests
+                if (activeManualContests.length !== storedManual.length) {
+                    setLocalStorage({ manualContests: activeManualContests });
+                }
+
                 if (!storedPlatforms || storedPlatforms.length === 0) {
                     navigate("/select-platforms");
                 } else {
@@ -57,7 +67,7 @@ const Contests = () => {
                     setPinnedContests(storedPinned);
                 }
                 
-                setManualContests(storedManual);
+                setManualContests(activeManualContests);
             })
             .catch((err) => {
                 console.error("Failed to load local storage:", err);
