@@ -1,5 +1,6 @@
 import ContestStatusBadge from "./ContestStatusBadge";
 import TimeDisplay from "./TimeDisplay";
+import { FaTrash } from "react-icons/fa";
 
 
 
@@ -48,34 +49,9 @@ const ContestCard = ({
                     startTime={contest.start}
                     userTimeZone={userTimeZone}
                 />
-                <div className="flex justify-between items-end w-full">
-                    <p className="text-gray-600 text-[13px]">
-                        Duration: {duration}
-                    </p>
-                    {/* {isManual && (
-                        <button
-                            className="text-gray-400 hover:text-red-500 transition-colors p-[2px] rounded-full hover:bg-gray-300 transform translate-y-1"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onDelete(contest);
-                            }}
-                            title="Delete Contest"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-4 w-4"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                    clipRule="evenodd"
-                                />
-                            </svg>
-                        </button>
-                    )} */}
-                </div>
+                <p className="text-gray-600 text-[13px]">
+                    Duration: {duration}
+                </p>
             </div>
 
             <div className="flex flex-col items-center justify-center h-full w-10 -translate-y-[5px] -translate-x-[2px]">
@@ -90,7 +66,21 @@ const ContestCard = ({
                 >
                     ★
                 </span>
-                <ContestStatusBadge status={contestStatus} />
+                <div className="relative flex items-center justify-center">
+                    {isManual && (
+                        <button
+                            className="absolute right-full mr-1 text-gray-400 hover:text-red-500 transition-colors p-[2px] rounded-full hover:bg-gray-300 z-10"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete(contest);
+                            }}
+                            title="Delete Contest"
+                        >
+                            <FaTrash className="h-3.5 w-3.5 translate-y-[6px]"  />
+                        </button>
+                    )}
+                    <ContestStatusBadge status={contestStatus} />
+                </div>
             </div>
 
         </div>
