@@ -1,6 +1,6 @@
 import ContestStatusBadge from "./ContestStatusBadge";
 import TimeDisplay from "./TimeDisplay";
-import { FaTrash } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
 
 
 
@@ -13,7 +13,7 @@ const ContestCard = ({
     duration,
     userTimeZone,
     isManual,
-    onDelete,
+    onEdit,
 }) => {
     return (
         <div className="bg-gray-200 border rounded-lg p-3 pt-2 h-[81.6px] grid grid-cols-[auto,1fr,auto] gap-3 items-center hover:shadow-lg">
@@ -69,14 +69,14 @@ const ContestCard = ({
                 <div className="relative flex items-center justify-center">
                     {isManual && (
                         <button
-                            className="absolute right-full mr-1 text-gray-400 hover:text-red-500 transition-colors p-[2px] rounded-full hover:bg-gray-300 z-10"
+                            className="absolute right-full mr-1 text-gray-400 hover:text-blue-500 transition-colors p-[2px] rounded-full hover:bg-gray-300 z-10"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                onDelete(contest);
+                                onEdit(contest);
                             }}
-                            title="Delete Contest"
+                            title="Edit Contest"
                         >
-                            <FaTrash className="h-3.5 w-3.5 translate-y-[6px]"  />
+                            <FaPen className="h-4 w-4 translate-y-[4px]"  />
                         </button>
                     )}
                     <ContestStatusBadge status={contestStatus} />

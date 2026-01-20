@@ -2,11 +2,41 @@ import { useState, useEffect } from "react";
 import PlatformData from "../data/PlatformsData";
 import { FaCheck } from "react-icons/fa";
 
-const AddContestCard = ({ onSave }) => {
+const AddContestCard = ({ onSave, initialData }) => {
     const [name, setName] = useState("");
     const [start, setStart] = useState("");
     const [duration, setDuration] = useState("");
     const [link, setLink] = useState("");
+
+    useEffect(() => {
+        if (initialData) {
+            setName(initialData.event || "");
+            setDuration(initialData.duration && initialData.duration > 0 ? Math.floor(initialData.duration / 60) : ""); // Convert seconds back to minutes
+            setLink(initialData.href || "");
+
+            if (initialData.start) {
+                // Stored as UTC-ish ISO string (e.g. "2023-10-27T10:00:00.000")
+                // We need to convert it to "YYYY-MM-DDThh:mm" in local time.
+                // Since the stored string is technically UTC but stripped of Z, we verify by re-adding Z.
+                try {
+                    const date = new Date(initialData.start + "Z");
+                    // Format to local ISO string YYYY-MM-DDThh:mm
+                    const localIso = new Date(date.getTime() - (date.getTimezoneOffset()  * 60000)).toISOString().slice(0, 16);
+                    setStart(localIso);
+                } catch (e) {
+                    console.error("Error parsing date:", e);
+                    setStart("");
+                }
+            }
+        } else {
+             // Reset form
+             setName("");
+             setStart("");
+             setDuration("");
+             setLink("");
+        }
+    }, [initialData]);
+
     const [isValid, setIsValid] = useState(false);
 
     const manualLogo = PlatformData.find((p) => p.name === "Manual")?.image;

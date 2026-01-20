@@ -16,6 +16,7 @@ const Contests = () => {
     const [displayWebsites, setDisplayWebsites] = useState([]);
     const [contests, setContests] = useState([]);
     const [manualContests, setManualContests] = useState([]);
+    const [draftContest, setDraftContest] = useState(null);
     const [isAdding, setIsAdding] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -176,9 +177,17 @@ const Contests = () => {
         setManualContests(updatedManual);
         setLocalStorage({ manualContests: updatedManual });
 
-        // Auto-pin
-        handlePinClick(newContest);
+        // Auto-pin check
+        if (draftContest && draftContest.wasPinned !== undefined) {
+            if (draftContest.wasPinned) {
+                 handlePinClick(newContest);
+            }
+        } else {
+             handlePinClick(newContest);
+        }
+
         setIsAdding(false);
+        setDraftContest(null);
     };
 
     const handleDeleteContest = (contestToDelete) => {
@@ -192,6 +201,13 @@ const Contests = () => {
             setPinnedContests(updatedPinned);
             setLocalStorage({ pinnedContests: updatedPinned });
         }
+    };
+
+    const handleEditContest = (contest) => {
+        const wasPinned = pinnedContests.some(p => p.id === contest.id);
+        handleDeleteContest(contest);
+        setDraftContest({ ...contest, wasPinned });
+        setIsAdding(true);
     };
 
     const handlePinClick = (contest) => {
@@ -231,17 +247,25 @@ const Contests = () => {
         navigate("/select-platforms");
     };
 
+    const handleToggleAdd = () => {
+        if (isAdding) {
+            setDraftContest(null);
+        }
+        setIsAdding(!isAdding);
+    };
+
     return (
         <div className="flex flex-col bg-gray-100 h-[600px] w-[400px] overflow-hidden rounded-lg">
             <Header 
                 onSettingsClick={handleSettingsClick} 
-                onAddClick={() => setIsAdding(!isAdding)}
+                onAddClick={handleToggleAdd}
                 isAdding={isAdding}
+                isEditing={!!draftContest}
             />
 
             {/* Scrollable Contest List */}
             <div className="flex-1 overflow-auto p-4 pt-0">
-                {isAdding && <AddContestCard onSave={handleAddContest} />}
+                {isAdding && <AddContestCard onSave={handleAddContest} initialData={draftContest} />}
                 {showLoader ? (
                     <div className="flex justify-center items-center h-48">
                         <div className="w-16 h-16 border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
@@ -284,7 +308,7 @@ const Contests = () => {
                                             duration={duration}
                                             userTimeZone={userTimeZone}
                                             isManual={isManual}
-                                            onDelete={handleDeleteContest}
+                                            onEdit={handleEditContest}
                                         />
                                     );
                                 })}
