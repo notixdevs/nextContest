@@ -92,9 +92,15 @@ const AddContestCard = ({ onSave, initialData }) => {
                         <input
                             type="number"
                             placeholder="min"
+                            min="0"
                             className="bg-white/50 hover:bg-white focus:bg-white border-b border-transparent focus:border-blue-500 text-gray-800 rounded-sm px-1 py-0 focus:outline-none w-[45px] h-[20px] text-center text-[13px]"
                             value={duration}
-                            onChange={(e) => setDuration(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === "" || Number(val) >= 0) {
+                                    setDuration(val);
+                                }
+                            }}
                         />
                     </div>
                      <input
