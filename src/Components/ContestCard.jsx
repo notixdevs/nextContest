@@ -31,19 +31,29 @@ const ContestCard = ({
             </div>
 
             <div className="flex flex-col justify-center max-w-[200px]">
-                <a
-                    href={contest.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-gray-800 hover:text-blue-500 text-sm"
-                >
-                    <span
-                        className="line-clamp-1 overflow-hidden text-ellipsis break-words"
+                {contest.href ? (
+                    <a
+                        href={contest.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-gray-800 hover:text-blue-500 text-sm"
                         title={contest.event}
                     >
-                        {contest.event}
+                        <span className="line-clamp-1 overflow-hidden text-ellipsis break-words">
+                            {contest.event}
+                        </span>
+                    </a>
+                ) : (
+                    <span
+                        className="font-medium text-gray-400 text-sm cursor-not-allowed"
+                        title="No link added"
+                    >
+                        <span className="line-clamp-1 overflow-hidden text-ellipsis break-words">
+                            {contest.event}
+                        </span>
                     </span>
-                </a>
+                )}
+
 
                 <TimeDisplay
                     startTime={contest.start}
