@@ -45,7 +45,7 @@ const ContestCard = ({
                     </a>
                 ) : (
                     <span
-                        className="font-medium text-gray-800 text-sm cursor-not-allowed"
+                        className="font-medium text-gray-800 text-sm "
                         title="No link added"
                     >
                         <span className="line-clamp-1 overflow-hidden text-ellipsis break-words">
