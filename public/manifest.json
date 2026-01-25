@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "nextContest - Contest Tracker",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Track Upcoming Contests",
     "icons": {
         "16": "icon16.png",
