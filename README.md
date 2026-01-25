@@ -3,11 +3,20 @@
 The **nextContest** Chrome Extension helps you stay on top of upcoming and ongoing contests from various platforms. With this extension, you can easily view important contest details such as the contest title, start time, duration, and time remaining until each contest starts, all in one place.
 
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/72b54d79-f182-4572-979f-950e8b16185a" alt="nextContest Screenshot 1" width="45%" style="margin-right: 10px;"/>
-  <img src="https://github.com/user-attachments/assets/1d9efc7b-5cd3-4b36-8df1-5ce109981059" alt="nextContest Screenshot 2" width="45%"/>
-</p>
 
+
+<table align="center" style="visibility: hidden;">
+  <tr>
+    <td width="55%" align="center" valign="middle">
+      <img src="https://github.com/user-attachments/assets/23b1e03a-5ca5-46ba-9e3b-f6040e631e75" alt="nextContest Screenshot 1" width="100%"/>
+    </td>
+    <td width="45%" align="center" valign="middle">
+      <img src="https://github.com/user-attachments/assets/1d9efc7b-5cd3-4b36-8df1-5ce109981059" alt="nextContest Screenshot 2" width="125%"/>
+      <br/> <br/>
+      <img src="https://github.com/user-attachments/assets/4267e18d-fbfb-4ea3-a246-17db7d8619ef" alt="Manual Contest Addition" width="125%"/>
+    </td>
+  </tr>
+</table>
 
 
 ## Features
@@ -17,8 +26,7 @@ The **nextContest** Chrome Extension helps you stay on top of upcoming and ongoi
 - **Ongoing Contests**: Easily identify ongoing contests with a **Live** indicator at the bottom of the contest card.  
 - **Pin and Get Reminders** – Click on a contest to pin it for quick access and automatically receive a reminder popup 5 minutes before it starts.  
 - **Contest Redirection**: Click on the contest title to be redirected to the contest page for more details.
-
-
+- **Manual Contest Addition**: Add your own custom contests or events manually directly from the extension.
 
 ## Installation
 
@@ -56,13 +64,6 @@ nextContest currently supports the following platforms:
 - **Atcoder**
 - **Coding Ninjas**
 - **Geeks for geeks**
-
-## Help Us Improve
-
-Found any bugs or have any suggestions to make nextContest better?
-Log them [here](https://forms.gle/iM17sUSwyJ17ayDr6).
-
-
 
 ## Rate Us
 
