@@ -45,7 +45,7 @@ const ContestCard = ({
                     </a>
                 ) : (
                     <span
-                        className="font-medium text-gray-400 text-sm cursor-not-allowed"
+                        className="font-medium text-gray-800 text-sm cursor-not-allowed"
                         title="No link added"
                     >
                         <span className="line-clamp-1 overflow-hidden text-ellipsis break-words">
@@ -79,14 +79,15 @@ const ContestCard = ({
                 <div className="relative flex items-center justify-center">
                     {isManual && (
                         <button
-                            className="absolute right-full mr-1 text-gray-400 hover:text-blue-500 transition-colors p-[2px] rounded-full hover:bg-gray-300 z-10"
+                            className="absolute right-full mr-1 text-gray-400 hover:text-blue-500
+                             transition-colors p-[2px] rounded-full z-10 group"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onEdit(contest);
                             }}
                             title="Edit Contest"
                         >
-                            <FaPen className="h-4 w-4 translate-y-[4px]"  />
+                            <FaPen className="h-4 w-4 translate-y-[4px] transition-transform group-hover:scale-125"  />
                         </button>
                     )}
                     <ContestStatusBadge status={contestStatus} />

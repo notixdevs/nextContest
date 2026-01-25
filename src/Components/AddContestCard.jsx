@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import PlatformData from "../data/PlatformsData";
 import { FaCheck } from "react-icons/fa";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const AddContestCard = ({ onSave, initialData }) => {
     const [name, setName] = useState("");
@@ -38,6 +40,7 @@ const AddContestCard = ({ onSave, initialData }) => {
     }, [initialData]);
 
     const [isValid, setIsValid] = useState(false);
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     const manualLogo = PlatformData.find((p) => p.name === "Manual")?.image;
 
@@ -77,12 +80,44 @@ const AddContestCard = ({ onSave, initialData }) => {
                 {/* Row 2: Start Time */}
                 <div className="flex items-center gap-1 text-[13px] text-gray-600 w-full">
                     <span className="font-normal whitespace-nowrap">Start:</span>
-                    <input
-                        type="datetime-local"
-                        className="bg-white/50 hover:bg-white focus:bg-white border-b border-transparent focus:border-blue-500 text-gray-800 rounded-sm px-1 py-0 focus:outline-none h-[20px] text-[13px] flex-1 min-w-0"
-                        value={start}
-                        onChange={(e) => setStart(e.target.value)}
-                    />
+                    <DatePicker
+                        selected={start ? new Date(start) : null}
+                        onChange={(date) => {
+                            if (date) {
+                                const year = date.getFullYear();
+                                const month = String(date.getMonth() + 1).padStart(2, '0');
+                                const day = String(date.getDate()).padStart(2, '0');
+                                const hours = String(date.getHours()).padStart(2, '0');
+                                const minutes = String(date.getMinutes()).padStart(2, '0');
+                                setStart(`${year}-${month}-${day}T${hours}:${minutes}`);
+                            } else {
+                                setStart("");
+                            }
+                        }}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={15}
+                        dateFormat="MM/dd/yyyy h:mm aa"
+                        className="bg-white/50 hover:bg-white focus:bg-white border-b border-transparent focus:border-blue-500 text-gray-800 rounded-sm px-1 py-0 focus:outline-none h-[20px] text-[13px] flex-1 min-w-0 w-full"
+                        placeholderText="Select Date & Time"
+                        open={isCalendarOpen}
+                        onClickOutside={() => setIsCalendarOpen(false)}
+                        onInputClick={() => setIsCalendarOpen(true)}
+                        shouldCloseOnSelect={false}
+                        wrapperClassName="flex-1 min-w-0"
+                    >
+                        <div className="flex justify-end p-2 border-t mt-2">
+                            <button
+                                className="bg-blue-500 text-white px-3 py-1 rounded text-xs font-bold hover:bg-blue-600 transition-colors"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setIsCalendarOpen(false);
+                                }}
+                            >
+                                OK
+                            </button>
+                        </div>
+                    </DatePicker>
                 </div>
 
                 {/* Row 3: Duration & Link */}
